@@ -1,4 +1,4 @@
-CREATE DATABASE employeeDB;
+CREATE DATABASE employeesDB;
 
 USE employeeDB;
 
@@ -27,4 +27,9 @@ CREATE TALBE empolyee {
     last_name VARCHAR(30),
     role_id INT NULL,
     manager_id INT NULL
-}
+};
+
+CREATE TABLE managers {
+    manager_id INT AUTO_INCREMENT PRIMARY KEY,
+    manager VARCHAR(30)
+};
