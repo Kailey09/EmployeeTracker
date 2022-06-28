@@ -51,6 +51,11 @@ const getEmployee = () => {
     });
 };
 
+const roleCheck = `SELECT id employee.first_name, employee.last_name, title, salary, department.role, manager_id
+FROM employee
+JOIN role ON employee.role_id = role.role_id
+JOIN department ON role.department_id = department.department_id`;
+
 const init = () => {
     getEmployee();
     getRole();
@@ -74,6 +79,10 @@ const init = () => {
           allEmployees();
           break;
 
+          case "View all roles":
+                 allRoles()
+                 break;
+
           case "View all employees by Department":
               allEmployeeDepartment();
               break;
@@ -86,13 +95,66 @@ const init = () => {
                       removeEmployee();
                       break;
 
-                      case "View all roles":
-                          allRoles()
-                          break;
-
                           case "Exit":
                               connection.end();
                               break;
       }
   });
 };
+
+const allEmployees = () => {
+    connection.query(roleCheck, (err, res) => {
+        console.log("\nALL EMPLOYEES\n");
+        if(err) throw err;
+        console.table(res);
+        init();
+    })
+};
+
+const allRoles = () => {
+    connection.query(`SELECT title FROM role`, (err, res) => {
+        console.log("\nALL ROLES\n");
+        if (err) throw err;
+        console.table(res);
+        init();
+    })
+};
+
+const allEmployeeDepartment = () => {
+    inquirer
+    .prompt({
+        type: "rawlist",
+        name: "Choose a department",
+        choice: ["Enginerring", "Finance", "Legal"]
+    }).then((answer) => {
+        if (answer.departments === 'Enginerring') {
+            connection.query(`SELECT employee.first_name, employee.last_name FROM employee
+            JOIN role ON employee.role_id = role.role_id
+            JOIN department ON role.department_id and department.department_id = "Enginerring"`,(err, res) => {
+                console.log("\nEnginerring\n");
+                if (err) throw err;
+                console.table(res);
+                init();
+            })
+        }
+        else if (answer.departments === "Finance") {
+            connection.query(`SELECT employee.first_name, employee.last_name FROM employee
+            JOIN role ON employee.role_id = role.role_id
+            JOIN deparment ON role.department_id = department.department_id and department.role = "Finance`, (err, res) => {
+                console.log("\nFinance\n");
+                console.table(res);
+                init();
+            })
+        }
+        else if (answer.departments === "Legal") {
+            connection.query(`SELECT employee.first_name, employee.last_name FROM employee
+            JOIN role ON  employee.role_id = role.role_id
+            JOIN department ON role.department_id = department.department_id and department.role = "legal"`, (err, res) => {
+                console.log("\nLegal\n");
+                if (err) throw err;
+                console.table(res);
+                init();
+            })
+        }
+    }) 
+}
