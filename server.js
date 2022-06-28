@@ -30,3 +30,69 @@ const getRole = () => {
         return roles;
     });
 };
+
+// get employee
+const getEmployee = () => {
+    connection.query(`SELECT first_name, last_name, id FROM employee`, (err,res) => {
+        if (err) throw err;
+        employees = [];
+        for (let i = 0; i < res.length; i++) {
+            const id = res[i].id;
+            const firstName = res[i].first_name;
+            const last_name = res[i].last_name;
+            // new employee
+            var newEmployees = {
+                name: first_name.comcat(" ", lastName),
+                value: id
+            }
+            employees.push(newEmployees);
+        }
+        return employees;
+    });
+};
+
+const init = () => {
+    getEmployee();
+    getRole();
+  inquirer
+  .prompt({
+      name: "init",
+      type: "rawlist",
+      message: "What would you like to do?",
+      choices: [
+          "View All Employees",
+          "View all Employees by Department",
+          "Add employee",
+          "Update employee role",
+          "Remove employee",
+          "View all roles"
+      ],
+  })
+  .then((answer) => {
+      switch (answer.init) {
+          case "View All Employees":
+          allEmployees();
+          break;
+
+          case "View all employees by Department":
+              allEmployeeDepartment();
+              break;
+
+              case "Add employee":
+                  addEmployee();
+                  break;
+
+                  case "Remove Employee":
+                      removeEmployee();
+                      break;
+
+                      case "View all roles":
+                          allRoles()
+                          break;
+
+                          case "Exit":
+                              connection.end();
+                              break;
+      }
+  });
+};
