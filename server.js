@@ -185,20 +185,38 @@ addEmployee = () => {
             message: 'Who is your manager?',
             choices: managers
         },
-    ]) .then(answer) => {
+    ]).then((answer) => {
         if(answer.manager === 'none') {
-            connection.query(`INSERT INTO employee(first_name, last_name, role_id,manager_id)
-            VALUES ('$(answer.first_name)', '$(answer.last_name)', $(answer.role), null )`, (err,res) => {
+            connection.query(`INSERT INTO employee(first_name, last_name, role_id,manager_id
+            VALUES ('$(answer.first_name)', '$(answer.last_name)', $(answer.role), null)`, (err,res) => {
                 if(err) throw err
                 init();
             });
         }
         else {
             connection.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id
-                VALUES ('$(answer.first_name)', '$(answer.last_name)', $(answer.role), $(answer.manager))`, (err,res) => {
+                VALUES ((answer.first_name)', '$(answer.last_name)', $(answer.role), $(answer.manager))`, (err,res) => {
                     if(err) throw err;
                     init();
-                })
-        }
-    }
-}
+                });
+        };
+    });
+};
+
+const removeEmployee = () => {
+    inquirer
+    .prompt({
+        type: 'list',
+        name: 'employee',
+        message: 'Who would youlike to remove',
+        choice: employees
+    }).then((answers) => {
+        connection.query(`DELETE FROM employee WHERE id=$(answer.employee)`, (err,res) => {
+            if(err) throw err;
+            init();
+        })
+        console.log(answer)
+    });
+};
+
+init();
