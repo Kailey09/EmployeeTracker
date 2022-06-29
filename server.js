@@ -158,3 +158,47 @@ const allEmployeeDepartment = () => {
         }
     }) 
 }
+
+// add employee
+addEmployee = () => {
+    inquirer
+    .prompt([
+        {
+            type: 'input',
+            name: 'first_name',
+            message: 'What is your first name?'
+        },
+        {
+            type: 'input',
+            name: 'last_name',
+            message: "Whats your last name?",
+        },
+        {
+            type: 'list',
+            name: 'role',
+            message: 'What is your position?',
+            choices: roles
+        },
+        {
+            type: 'list',
+            name: 'manager',
+            message: 'Who is your manager?',
+            choices: managers
+        },
+    ]) .then(answer) => {
+        if(answer.manager === 'none') {
+            connection.query(`INSERT INTO employee(first_name, last_name, role_id,manager_id)
+            VALUES ('$(answer.first_name)', '$(answer.last_name)', $(answer.role), null )`, (err,res) => {
+                if(err) throw err
+                init();
+            });
+        }
+        else {
+            connection.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id
+                VALUES ('$(answer.first_name)', '$(answer.last_name)', $(answer.role), $(answer.manager))`, (err,res) => {
+                    if(err) throw err;
+                    init();
+                })
+        }
+    }
+}
